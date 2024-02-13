@@ -1,13 +1,17 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class Course extends Requirement{
+public class Course {
     //Directed graph
     //Attributes
 
     /*Attributes taken straight from JSON database*/
-    //The alpha numeric code of a course (i.e. CSC 110
+
+    //The alphanumeric code of a course (i.e. CSC 110
     @JsonProperty("CourseCode")
     private String course_code;
 
@@ -19,7 +23,7 @@ public class Course extends Requirement{
     @JsonProperty("CourseDescription")
     private String course_description;
 
-    //Array of how many creits the course is worth
+    //Array of how many credits the course is worth
     @JsonProperty("Units")
     private String units;
 
@@ -29,12 +33,46 @@ public class Course extends Requirement{
     //Department that offers/oversees the course
     @JsonProperty("Department")
     private String department;
+    private Requirement pre_req_head;
+    @JsonSetter("Prereqs")
+    private void create_pre_reqs(Map the_input){
+        String type = null;
+        String name = null;
+        String quantity = null;
+        Object sub_reqs = null;
+
+        //for( Object key : the_input.keySet()){
+            //System.out.println(key);
+        type = (String) the_input.get("type");
+        name = (String)the_input.get("name");
+        quantity = (String)the_input.get("quantity");
+        sub_reqs = the_input.get("sub maps");
+        this.pre_req_head = new Requirement(type, name, quantity, sub_reqs);
+        //}
+
+        //System.out.println("\n\n");
+
+        // System.out.println(the_input);
+    }
+
+
+    private String map;
+    //private HashMap<String, Object> prereqs;
 
     //Weekly hours a course is scheduled for
-    private String hours;
+    //@JsonProperty("Hours")
+    private HashMap<String,String> hours;
+    private void find_shortest_path(){
+        //Start at head sub req and meet its requirements
+        Requirement current = this.pre_req_head;
 
+
+
+    }
     //
-    private HashMap<String, Requirement> prereqs;
+
+    private String reqs_string;
+    //private HashMap<String, Requirement> prereqs;
     private HashMap<String, Requirement> coreqs;
 
 
@@ -50,9 +88,25 @@ public class Course extends Requirement{
     //Constructor
     public Course(){
         this.taken = true;
+        //System.out.println("The prereq is: "+this.map );
+        //this.prereqs = new HashMap<>();
         //can = "HELLO";
         //System.out.println(can);
 
+    }
+
+    public boolean canTakeCourse(HashMap takenCourses){
+        if (this.pre_req_head.getName() != null) {
+            double quantity = Double.parseDouble(this.pre_req_head.getQuantity().split("-")[0]);
+            System.out.println("Pre req headL " + pre_req_head);
+            double level = quantity;
+        }else{
+
+            return true;
+        }
+
+        //When we have 'all' we want to look at the length of the sub reqs list
+        return false;
     }
 
 
@@ -66,10 +120,11 @@ public class Course extends Requirement{
 */
 
 
-    //Methods
 
 
     //Getters
+
+
 
     public boolean isTaken() {
         return taken;
@@ -91,12 +146,15 @@ public class Course extends Requirement{
         return prereq_courses;
     }
 */
-    public String getCourseName(){
+    public String get_course_name(){
         return course_name;
     }
 
-    public void setPrereqs(HashMap<String, Requirement> prereqs) {
-        this.prereqs = prereqs;
+    public String get_course_code(){
+        return course_code;}
+
+    public void setPrereqs(HashMap<String, Object> prereqs) {
+        //this.prereqs = prereqs;
     }
 
     public double getFinal_grade() {

@@ -2,8 +2,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class JSON_DB {
 
@@ -12,6 +14,7 @@ public class JSON_DB {
     private Course courses_array[];
     private static JSON_DB json_db;
     private int db_size;
+    private static ObjectMapper mapper;
 
     /**
      * @return: The only allowed instance of the class
@@ -25,10 +28,13 @@ public class JSON_DB {
            json_db = new JSON_DB(json_file);
 
 
-
         }
         return json_db;
 
+    }
+
+    public static ObjectMapper get_mapper(){
+        return mapper;
     }
 
 
@@ -36,21 +42,25 @@ public class JSON_DB {
 
     //Singleton Constructor
     private JSON_DB(File json_file){
+
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
         classes_map = new HashMap<>();
+        db_size = 0;
         try{
+            Scanner fileReader = new Scanner(json_file);
+
 
             courses_array = mapper.readValue( json_file, Course[].class);
-            System.out.print("SHITE");
             for (Course current: courses_array){
-                classes_map.put(current.getCourseName(), current);
-                db_size++;
+                classes_map.put(current.get_course_code(), current);
             }
-            System.out.println(db_size);
+            db_size = classes_map.size();
             int i = 1;
         }catch (IOException e){
-
+            System.out.println(e.toString());
         }
 
 
@@ -80,7 +90,10 @@ public class JSON_DB {
         return db_size;
     }
 
+    public Course getCourse(String course_code){
+        return classes_map.get(course_code);
 
+    }
     //Setters
 
 
