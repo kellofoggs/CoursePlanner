@@ -53,8 +53,8 @@ public class graphTest {
             "'No requirements needed (ATWP) but has some courses', 'true', 'ATWP101', 'CSC361, CSC360, CSC226'",
             "'No requirements needed (ATWP101) empty transcript' , 'true', 'ATWP101', ''",
             "'1 of first level requirements needed (LING325) --Unneeded requirement in transcript', 'true', 'LING325', 'LING181, LING100A, CSC226' ",
-            "'Second level of sub requirements needed (CSC360) reqs met', 'true', 'CSC360', 'CSC225, SENG265, CSC230' "
-
+            "'Second level of sub requirements needed (CSC360) reqs met', 'true', 'CSC360', 'CSC225, SENG265, CSC230' ",
+            "'Second level of sub requirements needed (CSC360) one branch of reqs not met', 'false', 'CSC360', 'CSC225, CSC230'"
 
 
     })
