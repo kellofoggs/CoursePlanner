@@ -69,11 +69,14 @@ public class graphTest {
 
         //Transcript my_transcript = new Transcript(course_taken_map);
 
-        Course atwp101 = db.getCourse(target_course_name);
+        Course course = db.getCourse(target_course_name);
         //boolean expected = true;
-        assertEquals(expected,atwp101.canTakeCourse(course_taken_set));
+        assertEquals(expected,course.canTakeCourse(course_taken_set));
 
     }
+
+
+
 
 
     @Test

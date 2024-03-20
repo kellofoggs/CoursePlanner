@@ -54,7 +54,7 @@ public class Requirement {
 //    public boolean sub_reqs_satisfied(HashMap takenCourses){
 
 
-    public boolean sub_reqs_satisfied(HashSet takenCourses, JSON_DB db){
+    private boolean sub_reqs_satisfied(HashSet takenCourses, JSON_DB db){
         //Consider edge case with variable
 
 
