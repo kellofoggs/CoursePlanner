@@ -17,7 +17,8 @@ public class graphTest {
     //Create a fresh database each time
     @BeforeEach
     void generate_DB(){
-        File my_file = new File("C:\\Users\\Kelly\\Documents\\PersonalProjects\\CoursePlanner\\src\\main\\resources\\results.json");
+        File my_file = new File("src/test/resources/results.json");
+
         db = JSON_DB.get_instance(my_file);
     }
 
@@ -46,7 +47,7 @@ public class graphTest {
     }
     //Tests if the 'can take course' method works by creating a transcript and object with courses taken and seeing if all
     //requirements are met
-    // First column is the name, then whether or not student should be able to take course, the name of the course, then the courses taken
+    // First column is the name, then true if student should be able to take course, the name of the course, then the courses on student's mock transcript
     @ParameterizedTest
     @CsvSource({
 

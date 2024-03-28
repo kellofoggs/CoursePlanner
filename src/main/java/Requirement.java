@@ -65,14 +65,11 @@ public class Requirement {
         if (type.equals("requirement")) {
             //Evaluate sub level
             for (Requirement sub_req : sub_reqs) {
-                System.out.println(sub_req.getName() + " " + sub_req.getType());
                 //Go down to bottom
                 if (sub_req.sub_reqs_satisfied(takenCourses, db)) {
                     level_quantity = level_quantity - 1;
                 }
-
-                System.out.println("\n");
-//
+                //
 //                // If the student has taken the course
 //                if ( takenCourses.contains(sub_req.getName()) ){
 //                    level_quantity--;

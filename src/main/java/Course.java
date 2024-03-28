@@ -101,7 +101,6 @@ public class Course {
         if (this.pre_req_head.getName() != null) {
 
             double quantity = Double.parseDouble(this.pre_req_head.getQuantity().split("-")[0]);
-            System.out.println("Pre req headL " + pre_req_head);
             double level = quantity;
             return (this.pre_req_head.isSatisfied(takenCourses));
 
