@@ -30,6 +30,8 @@ public class Requirement {
 //        }
 
 
+
+
     }
 
     private void generate_sub_reqs(Object req_list) {
@@ -49,17 +51,63 @@ public class Requirement {
          }
         //}
     }
+//    public boolean sub_reqs_satisfied(HashMap takenCourses){
 
 
-    public boolean sub_reqs_satisfied(){
+    private boolean sub_reqs_satisfied(HashSet takenCourses, JSON_DB db){
+        //Consider edge case with variable
 
-        if (!type.matches("course|other")){
-            for (Requirement req: sub_reqs){
 
+        // If we're at a 'complete' or 'units' type
+        double level_quantity = Double.parseDouble(this.quantity);
+
+
+        if (type.equals("requirement")) {
+            //Evaluate sub level
+            for (Requirement sub_req : sub_reqs) {
+                //Go down to bottom
+                if (sub_req.sub_reqs_satisfied(takenCourses, db)) {
+                    level_quantity = level_quantity - 1;
+                }
+                //
+//                // If the student has taken the course
+//                if ( takenCourses.contains(sub_req.getName()) ){
+//                    level_quantity--;
+//                    System.out.println("Student has taken: " + sub_req.getName());
+//                }
             }
-        }else{
+        }
+        // course type objects do not have sub reqs, stop going down here
+        if (this.type.equals("course")){
+
+            //Instead check if the course is in the taken set
+           return (takenCourses.contains(this.getName()));
+//            {
+//               return true;
+//           }else{
+//               return false;
+//           }
+
+        }
+
+        if (level_quantity <= 0){
             return true;
         }
+
+        if (type.equals("units")){
+
+        }
+
+
+
+//        For future when calculating shortest path to taking course
+//        if (!type.matches("course|other")){
+//            for (Requirement req: sub_reqs){
+//
+//            }
+//        }else{
+//            return true;
+//        }
 
         return false;
     }
@@ -76,7 +124,8 @@ public class Requirement {
         return quantity;
     }
 
-    public boolean isSatisfied() {
-        return satisfied;
+    public boolean isSatisfied(HashSet takenCourses) {
+        JSON_DB db = JSON_DB.getJson_db();
+        return sub_reqs_satisfied(takenCourses, db);
     }
 }

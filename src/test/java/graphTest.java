@@ -1,9 +1,12 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,8 +16,9 @@ public class graphTest {
 
     //Create a fresh database each time
     @BeforeEach
-    private void generate_DB(){
-        File my_file = new File("C:\\Users\\Kelly\\Documents\\PersonalProjects\\CoursePlanner\\src\\main\\resources\\results.json");
+    void generate_DB(){
+        File my_file = new File("src/test/resources/results.json");
+
         db = JSON_DB.get_instance(my_file);
     }
 
@@ -41,18 +45,39 @@ public class graphTest {
 
 
     }
-    @Test
-    void check_can_take_course(){
-        HashMap<String, String> course_taken_map = new HashMap<>();
+    //Tests if the 'can take course' method works by creating a transcript and object with courses taken and seeing if all
+    //requirements are met
+    // First column is the name, then true if student should be able to take course, the name of the course, then the courses on student's mock transcript
+    @ParameterizedTest
+    @CsvSource({
 
-        Transcript my_transcript = new Transcript(course_taken_map);
+            "'No requirements needed (ATWP) but has some courses', 'true', 'ATWP101', 'CSC361, CSC360, CSC226'",
+            "'No requirements needed (ATWP101) empty transcript' , 'true', 'ATWP101', ''",
+            "'1 of first level requirements needed (LING325) --Unneeded requirement in transcript', 'true', 'LING325', 'LING181, LING100A, CSC226' ",
+            "'Second level of sub requirements needed (CSC360) reqs met', 'true', 'CSC360', 'CSC225, SENG265, CSC230' ",
+            "'Second level of sub requirements needed (CSC360) one branch of reqs not met', 'false', 'CSC360', 'CSC225, CSC230'"
 
-//        Course csc360 = db.getCourse("CSC360");
-        Course atwp101 = db.getCourse("ATWP101");
-        boolean expected = true;
-        assertEquals(expected,atwp101.canTakeCourse(my_transcript.getCoursesTaken()));
+
+    })
+    @DisplayName("The can take course method works properly")
+    void check_can_take_course(String test_case_name, boolean expected, String target_course_name, String courses_taken_string){
+        String[] courses_taken_array = courses_taken_string.split(", ");
+
+        HashSet<String> course_taken_set = new HashSet<>();
+        for (String taken_course_name: courses_taken_array){
+            course_taken_set.add(taken_course_name);
+        }
+
+        //Transcript my_transcript = new Transcript(course_taken_map);
+
+        Course course = db.getCourse(target_course_name);
+        //boolean expected = true;
+        assertEquals(expected,course.canTakeCourse(course_taken_set));
 
     }
+
+
+
 
 
     @Test

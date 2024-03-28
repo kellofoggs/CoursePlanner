@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Course {
@@ -95,18 +96,21 @@ public class Course {
 
     }
 
-    public boolean canTakeCourse(HashMap takenCourses){
+    public boolean canTakeCourse(HashSet takenCourses){
+        //If there actually is some sort of requirement that isn't empty
         if (this.pre_req_head.getName() != null) {
+
             double quantity = Double.parseDouble(this.pre_req_head.getQuantity().split("-")[0]);
-            System.out.println("Pre req headL " + pre_req_head);
             double level = quantity;
+            return (this.pre_req_head.isSatisfied(takenCourses));
+
         }else{
 
             return true;
         }
 
         //When we have 'all' we want to look at the length of the sub reqs list
-        return false;
+        //return false;
     }
 
 
@@ -152,6 +156,10 @@ public class Course {
 
     public String get_course_code(){
         return course_code;}
+
+    public String getUnits(){
+        return this.units;
+    }
 
     public void setPrereqs(HashMap<String, Object> prereqs) {
         //this.prereqs = prereqs;
