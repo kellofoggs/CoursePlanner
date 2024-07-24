@@ -1,10 +1,7 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Course {
     //Directed graph
@@ -13,29 +10,29 @@ public class Course {
     /*Attributes taken straight from JSON database*/
 
     //The alphanumeric code of a course (i.e. CSC 110
-    @JsonProperty("CourseCode")
+    @JsonProperty("courseCode")
     private String course_code;
 
     //The plain language name of a course (i.e. Fundamentals of Programming I)
-    @JsonProperty("CourseName")
+    @JsonProperty("courseName")
     private String course_name;
 
     //Description of what the course is all about
-    @JsonProperty("CourseDescription")
+    @JsonProperty("courseDescription")
     private String course_description;
 
     //Array of how many credits the course is worth
-    @JsonProperty("Units")
+    @JsonProperty("units")
     private String units;
 
     //Additional notes to consider about the course
-    @JsonProperty("Notes")
+    @JsonProperty("notes")
     private String notes;
     //Department that offers/oversees the course
-    @JsonProperty("Department")
+    @JsonProperty("department")
     private String department;
-    private Requirement pre_req_head;
-    @JsonSetter("Prereqs")
+    private Requirement prereqs;
+    @JsonSetter("prereqs")
     private void create_pre_reqs(Map the_input){
         String type = null;
         String name = null;
@@ -47,8 +44,8 @@ public class Course {
         type = (String) the_input.get("type");
         name = (String)the_input.get("name");
         quantity = (String)the_input.get("quantity");
-        sub_reqs = the_input.get("sub maps");
-        this.pre_req_head = new Requirement(type, name, quantity, sub_reqs);
+        sub_reqs = the_input.get("sub_maps");
+        this.prereqs = new Requirement(type, name, quantity, sub_reqs);
         //}
 
         //System.out.println("\n\n");
@@ -65,7 +62,7 @@ public class Course {
     private HashMap<String,String> hours;
     private void find_shortest_path(){
         //Start at head sub req and meet its requirements
-        Requirement current = this.pre_req_head;
+        Requirement current = this.prereqs;
 
 
 
@@ -98,11 +95,11 @@ public class Course {
 
     public boolean canTakeCourse(HashSet takenCourses){
         //If there actually is some sort of requirement that isn't empty
-        if (this.pre_req_head.getName() != null) {
+        if (this.prereqs.getName() != null) {
 
-            double quantity = Double.parseDouble(this.pre_req_head.getQuantity().split("-")[0]);
+            double quantity = Double.parseDouble(this.prereqs.getQuantity().split("-")[0]);
             double level = quantity;
-            return (this.pre_req_head.isSatisfied(takenCourses));
+            return (this.prereqs.isSatisfied(takenCourses));
 
         }else{
 
@@ -113,7 +110,68 @@ public class Course {
         //return false;
     }
 
+    public Requirement expandedTreeWrapper( ){
 
+
+        Requirement current = this.prereqs.clone();
+
+        HashSet<Requirement> visited = new HashSet<>();
+
+//
+//        long time_before = System.nanoTime();
+        this.getExpandedTree(current, visited);
+//        long time_after = System.nanoTime();
+//
+//        long time_passed = time_after-time_before;
+////        System.out.println("Before: "+time_before);
+////        System.out.println("After: "+time_after);
+//        System.out.println("Elapsed time in seconds: " + time_passed/1000000000);
+        System.out.println(current);
+        return current;
+
+//        return prereqs;
+    }
+
+    /**
+     * Recursive method that goes down sub req tree to build new sub reqs if the current requirement is a course
+     * @param requirement The current requirement being looked at in the dfs progression. Can be a course, unit, 'complete' or other type
+     * @param visitedSet Set that contains visited nodes for dfs
+     * @return Eventually the last requirement is returned
+     * */
+    private Requirement getExpandedTree(Requirement requirement, HashSet<Requirement> visitedSet){
+
+
+        //When we get course requirement replace that requirement's submaps with requirements of that course
+        if (requirement != null ) {
+            visitedSet.add(requirement);
+            List<Requirement> sub_maps = requirement.getSub_reqs();
+            if (requirement.getType().equals("course")) {
+                String name = requirement.getName();
+                Course course = JSON_DB.getJson_db().getCourse(name);
+                if (course != null) {
+                    sub_maps.add(course.getPrereqs());
+                    requirement.setSub_reqs(sub_maps);
+                }
+
+
+            }
+
+
+            for (Requirement child : requirement.getSub_reqs()) {
+                // If the visited set does not contain the requirement, look at the requirement
+                if (!visitedSet.contains(child)) {
+                    getExpandedTree(child, visitedSet);
+                }
+            }
+        }
+
+        return requirement;
+
+    }
+
+    public Requirement getPrereqs() {
+        return prereqs;
+    }
 
     /*public Course(String[] prereqs, boolean taken, double final_grade){
         this.prereqs=prereqs;
@@ -162,7 +220,7 @@ public class Course {
     }
 
     public void setPrereqs(HashMap<String, Object> prereqs) {
-        //this.prereqs = prereqs;
+//        this.prereqs = prereqs;
     }
 
     public double getFinal_grade() {

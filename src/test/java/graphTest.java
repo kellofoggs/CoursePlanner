@@ -20,22 +20,27 @@ public class graphTest {
         File my_file = new File("src/test/resources/results.json");
 
         db = JSON_DB.get_instance(my_file);
+
     }
 
 
     @Test
     @DisplayName("Correct number of course items generated")
     void test_array_size(){
-        assertEquals(3547, db.getDb_size());
+        assertEquals(3548, db.getDb_size());
     }
 
     @Test
-    @DisplayName("Does get the a coures object from querying database")
+    @DisplayName("Does get the course object from querying database")
     void get_course(){
         String expected_course_code = "ECE460";
         String expected_course_name = "Control Theory and Systems II";
         Course target = db.getCourse(expected_course_code);
-
+        Course c = db.getCourse("CSC360");
+        long start = System.nanoTime();
+        c.expandedTreeWrapper();
+        long end = System.nanoTime();
+        System.out.println((end - start));
         boolean is_course_name_and_desc =
                 target.get_course_name().equals(expected_course_name) && target.get_course_code().equals(expected_course_code);
         assertTrue(is_course_name_and_desc);
@@ -83,7 +88,8 @@ public class graphTest {
     @Test
     @DisplayName("Does get the names of prereqs")
     void get_pre_reqs(){
-
+        Course csc110 = db.getCourse("CSC230");
+        csc110.expandedTreeWrapper();
 
 
     }

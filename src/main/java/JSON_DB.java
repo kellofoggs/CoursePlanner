@@ -2,7 +2,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,7 +10,7 @@ public class JSON_DB {
 
     private static boolean instance_exists;
     private HashMap<String, Course > classes_map;
-    private Course courses_array[];
+    private Course[] courses_array;
     private static JSON_DB json_db;
     private int db_size;
     private static ObjectMapper mapper;

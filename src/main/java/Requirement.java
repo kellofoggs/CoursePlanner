@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Requirement {
+public class Requirement implements Cloneable {
 
     /*Attributes*/
     private String type;
@@ -41,7 +41,7 @@ public class Requirement {
                 String type = (String) req_map.get("type");//null;
                 String name = (String) req_map.get("name");//null;
                 String quantity = (String) req_map.get("quantity");// null;
-                Object sub_req_array = req_map.get("sub maps");//null;
+                Object sub_req_array = req_map.get("sub_maps");//null;
 
                 Requirement sub_req = new Requirement(type, name, quantity, sub_req_array);
 
@@ -124,8 +124,59 @@ public class Requirement {
         return quantity;
     }
 
+    public List<Requirement> getSub_reqs() {
+        return sub_reqs;
+    }
+
     public boolean isSatisfied(HashSet takenCourses) {
         JSON_DB db = JSON_DB.getJson_db();
         return sub_reqs_satisfied(takenCourses, db);
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setSatisfied(boolean satisfied) {
+        this.satisfied = satisfied;
+    }
+
+    public void setSub_reqs(List<Requirement> sub_reqs) {
+        this.sub_reqs = sub_reqs;
+    }
+
+    public void setSub(List<Requirement> sub) {
+        this.sub = sub;
+    }
+
+    @Override
+    public Requirement clone() {
+        try {
+            Requirement clone = (Requirement) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Requirement{" +
+                "type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", satisfied=" + satisfied +
+                ", sub_reqs=" + sub_reqs +
+                ", sub=" + sub +
+                '}';
     }
 }
